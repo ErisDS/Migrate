@@ -26,3 +26,6 @@
 <p>You can run the script as many times as you like and it will not cause any unwanted problems, to get it to work you only need to make sure that the "from" or "current" URL is correct. If it isn't correct, nothing bad will happen! 
 The script does exactly the same thing each time it is run, therefore if you want to test it by changing your WordPress install to a dummy URL and back again, you can :)</p>
 
+<h2>More Information</h2>
+
+<p>To download the script or for more information, including full instructions with sreenshots please see the project's webpage at: <a href="http://erisds.co.uk/projects/migrate">erisds.co.uk/projects/migrate</a></p>
