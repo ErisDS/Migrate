@@ -17,7 +17,7 @@
   <li>The script will output details of what has been changed, and your WordPress install should now work correctly</li>  
 </ol>
 
-<h3>What to do if you got a Warning</h3>
+<h3>I got a warning message?</h3>
 
 <p>During Step 2 of the process, the script checks to see if the new URL matches the server URL where the migrate.php script is sitting. If they don't match the script produces a warning. This is because in most cases they should be the same, and this warning will hopefully ward off unwanted spelling errors.</p>
 
