@@ -7,7 +7,7 @@ Author Email: erisds@gmail.com
 Author URL: http://erisds.co.uk
 Script URL: http://erisds.co.uk/resources/migrate
 TODO: Add BB Press support back
-Version: 0.0.2
+Version: 0.0.3
 */
 
 
@@ -31,13 +31,40 @@ $server_url = 'http://' . $_SERVER['SERVER_NAME'];
 
 function checkURL($url)
 {
+  /*
   $url_regex = '/^(http\:\/\/[a-zA-Z0-9_\-]+(?:\.[a-zA-Z0-9_\-]+)*\.[a-zA-Z]{2,4}(?:\/[a-zA-Z0-9_]+)*(?:\/[a-zA-Z0-9_]+\.[a-zA-Z]{2,4}(?:\?[a-zA-Z0-9_]+\=[a-zA-Z0-9_]+)?)?(?:\&[a-zA-Z0-9_]+\=[a-zA-Z0-9_]+)*)$/';
+  */
+  
+  /* Make sure it's a properly formatted URL. */
+  // From: http://www.daniweb.com/web-development/php/threads/290866
+  // Scheme
+  $url_regex = '^(https?|s?ftp\:\/\/)|(mailto\:)';
+  // User and password (optional)
+  $url_regex .= '([a-z0-9\+!\*\(\)\,\;\?&=\$_\.\-]+(\:[a-z0-9\+!\*\(\)\,\;\?&=\$_\.\-]+)?@)?';
+  // Hostname or IP
+  // http://x = allowed (ex. http://localhost, http://routerlogin)
+  $url_regex .= '[a-z0-9\+\$_\-]+(\.[a-z0-9\+\$_\-]+)*';
+  // http://x.x = minimum
+  // $url_regex .= "[a-z0-9\+\$_\-]+(\.[a-z0-9+\$_\-]+)+";
+  // http://x.xx(x) = minimum
+  // $url_regex .= "([a-z0-9\+\$_\-]+\.)*[a-z0-9\+\$_\-]{2,3}";
+  // use only one of the above
+  // Port (optional)
+  $url_regex .= '(\:[0-9]{2,5})?';
+  // Path (optional)
+  // $urlregex .= '(\/([a-z0-9\+\$_\-]\.\?)+)*\/?';
+  // GET Query (optional)
+  $url_regex .= '(\?[a-z\+&\$_\.\-][a-z0-9\;\:@\/&%=\+\$_\.\-]*)?';
+  // Anchor (optional)
+  // $urlregex .= '(\#[a-z_\.\-][a-z0-9\+\$_\.\-]*)?$';
+  
+  
   if($url == 'http://')
   {
     return false;
   }  
   
-  return preg_match($url_regex, $url);
+  return preg_match('/'.$url_regex.'/i', $url);
 }
 
 
@@ -172,9 +199,7 @@ function checkURL($url)
         <li>Content:<strong> <?php echo $content_count > 0 ? $content_count . '</strong> <span class="red">need updating</span>' : '</strong><span class="green">No updates necessary</span>'; ?> </li>
       </ul>
 
-      <?php if($total > 0): ?>
-      
-        <div class="info"><strong><?php echo $total; ?></strong> database entries will be migrated</div>
+      <?php if($url_pattern != $home || $url_pattern != $site || $url_replace != $server_url): ?>
            
         <?php if($url_pattern != $home): ?>
           <div class="warning">Your current URL (<?php echo $url_pattern; ?>) is not the same as the current home URL (<?php echo $home; ?>). This could cause issues. Please confirm you want to proceed below.</div>
@@ -187,10 +212,16 @@ function checkURL($url)
         <?php if($url_replace != $server_url): ?>
           <div class="warning">Your replacement URL (<?php echo $url_replace; ?>) is not the same as the current server URL (<?php echo $server_url; ?>). Please confirm you want to proceed below.</div>
         <?php endif; ?>
-        
+      
+      <?php endif; ?>
+      
+      <?php if ($total > 0): ?>
+        <div class="info"><strong><?php echo $total; ?></strong> database entries will be migrated</div>
+      
         <?php if($_POST['submit_confirm'] && !$_POST['confirm']): ?>
         <div class="error">You must confirm the changes to continue!</div>
         <?php endif; ?>
+        
         
           
         <form id="confirm_form" action="<?php $_SERVER['PHP_SELF']; ?>" method="POST">
