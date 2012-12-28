@@ -59,12 +59,33 @@ function checkURL($url)
   // $urlregex .= '(\#[a-z_\.\-][a-z0-9\+\$_\.\-]*)?$';
   
   
-  if($url == 'http://')
+  if($url == 'http://' || $url == 'https://')
   {
     return false;
   }  
   
   return preg_match('/'.$url_regex.'/i', $url);
+}
+
+function startsWithHttp($url) {
+  if($url && $url!='') {
+    return (substr($url, 0, 7) == 'http://' || substr($url, 0, 8) == 'https://');
+  }
+}
+
+function addHttpIfNotIn($url) {
+	return (startsWithHttp($url) ? $url : 'http://' . $url);
+}
+
+function getURLPostOrHardCoded($post_url, $hard_coded_url) {
+  if($post_url && $post_url !== '')
+    {
+	  return addHttpIfNotIn($post_url);
+    }
+    else
+    {
+	  return addHttpIfNotIn($hard_coded_url);  
+    }
 }
 
 
@@ -113,24 +134,8 @@ function checkURL($url)
       
       
       
-      if($_POST['url_pattern'] && $_POST['url_pattern'] !== '')
-      {
-        $url_pattern = substr($_POST['url_pattern'], 0, 7) == 'http://' ? $_POST['url_pattern'] : 'http://' . $_POST['url_pattern'];
-      }
-      else
-      {
-        $url_pattern = substr($current_url, 0, 7) == 'http://' ? $current_url : 'http://' . $current_url;  
-      }
-      
-      if($_POST['url_replace'] && $_POST['url_replace'] !== '')
-      {
-        $url_replace = substr($_POST['url_replace'], 0, 7) == 'http://' ? $_POST['url_replace'] : 'http://' . $_POST['url_replace'];
-      }
-      else
-      {
-        $url_replace = substr($replacement_url, 0, 7) == 'http://' ? $replacement_url : 'http://' . $replacement_url; 
-      }
-      
+      $url_pattern = getURLPostOrHardCoded($_POST['url_pattern'], $current_url);
+	  $url_replace = getURLPostOrHardCoded($_POST['url_replace'], $replacement_url);      
          
       // IF NOT SUBMITTED
       if((!$_POST['submit_urls'] || ($_POST['submit_urls'] && (!checkURL($url_pattern) || !checkURL($url_replace)))) && (!$_POST['submit_confirm'] || ($_POST['submit_confirm'] && !$_POST['confirm']))):
