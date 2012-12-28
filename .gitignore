@@ -1,0 +1,7 @@
+# ignore idea project files
+.idea
+
+# ignore OS stuff
+Thumbs.db
+*~
+.DS_Store
