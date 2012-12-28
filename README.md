@@ -14,7 +14,7 @@
   <li>Press "Continue (Step 2)"</li>
   <li>The information you entered will be repeated back to you, along with some information about your WordPress install and what is going to be changed.</li>
   <li>If you are happy the information is correct, check the confirmation checkbox and press "Lets do this!" </li>
-  <li>The script will output details of what has been changed, and your WordPress install should now work correctly</li>  
+  <li>The script will output details of what has been changed, and your WordPress install should now work correctly</li>
 </ol>
 
 <h3>I got a warning message?</h3>
@@ -23,9 +23,16 @@
 
 <h3>What if I changed the URL incorrectly?</h3>
 
-<p>You can run the script as many times as you like and it will not cause any unwanted problems, to get it to work you only need to make sure that the "from" or "current" URL is correct. If it isn't correct, nothing bad will happen! 
+<p>You can run the script as many times as you like and it will not cause any unwanted problems, to get it to work you only need to make sure that the "from" or "current" URL is correct. If it isn't correct, nothing bad will happen!
 The script does exactly the same thing each time it is run, therefore if you want to test it by changing your WordPress install to a dummy URL and back again, you can :)</p>
 
 <h2>More Information</h2>
 
 <p>To download the script or for more information, including full instructions with sreenshots please see the project's webpage at: <a href="http://erisds.co.uk/projects/migrate">erisds.co.uk/projects/migrate</a></p>
+
+<h2>Changelog</h2>
+
+<dl>
+  <dt>Version 0.0.4</dt>
+  <dd>Bugfix / support for <kbd>https://</kbd> thanks to Bteryk</dd>
+</dl>
