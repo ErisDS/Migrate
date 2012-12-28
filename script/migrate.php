@@ -6,17 +6,18 @@ Author: Hannah (ErisDS)
 Author Email: erisds@gmail.com
 Author URL: http://erisds.co.uk
 Script URL: http://erisds.co.uk/resources/migrate
+Contributor: Teryk Bellahsene (bteryk)
 TODO: Add BB Press support back
-Version: 0.0.3
+Version: 0.0.4
 */
 
 
-/* 
+/*
 $current_url: Set this to be the current URL of your WordPress install if you want a default (including http://)
 */
 $current_url = "";
 
-/* 
+/*
 $replacement_url: Set this to be the new URL of your WordPress install if you want a default (including http://)
 */
 $replacement_url = "";
@@ -29,12 +30,11 @@ $server_url = 'http://' . $_SERVER['SERVER_NAME'];
 
 
 
-function checkURL($url)
-{
+function checkURL($url) {
   /*
   $url_regex = '/^(http\:\/\/[a-zA-Z0-9_\-]+(?:\.[a-zA-Z0-9_\-]+)*\.[a-zA-Z]{2,4}(?:\/[a-zA-Z0-9_]+)*(?:\/[a-zA-Z0-9_]+\.[a-zA-Z]{2,4}(?:\?[a-zA-Z0-9_]+\=[a-zA-Z0-9_]+)?)?(?:\&[a-zA-Z0-9_]+\=[a-zA-Z0-9_]+)*)$/';
   */
-  
+
   /* Make sure it's a properly formatted URL. */
   // From: http://www.daniweb.com/web-development/php/threads/290866
   // Scheme
@@ -57,35 +57,33 @@ function checkURL($url)
   $url_regex .= '(\?[a-z\+&\$_\.\-][a-z0-9\;\:@\/&%=\+\$_\.\-]*)?';
   // Anchor (optional)
   // $urlregex .= '(\#[a-z_\.\-][a-z0-9\+\$_\.\-]*)?$';
-  
-  
-  if($url == 'http://' || $url == 'https://')
-  {
+
+
+  if ($url == 'http://' || $url == 'https://') {
     return false;
-  }  
-  
+  }
+
   return preg_match('/'.$url_regex.'/i', $url);
 }
 
 function startsWithHttp($url) {
-  if($url && $url!='') {
+  if ($url && $url != '') {
     return (substr($url, 0, 7) == 'http://' || substr($url, 0, 8) == 'https://');
   }
+
+  return false;
 }
 
 function addHttpIfNotIn($url) {
 	return (startsWithHttp($url) ? $url : 'http://' . $url);
 }
 
-function getURLPostOrHardCoded($post_url, $hard_coded_url) {
-  if($post_url && $post_url !== '')
-    {
-	  return addHttpIfNotIn($post_url);
-    }
-    else
-    {
-	  return addHttpIfNotIn($hard_coded_url);  
-    }
+function getUserSubmittedOrHardCodedUrl($post_url, $hard_coded_url) {
+  if ($post_url && $post_url !== '') {
+    return addHttpIfNotIn($post_url);
+  } else {
+    return addHttpIfNotIn($hard_coded_url);
+  }
 }
 
 
@@ -122,8 +120,8 @@ function getURLPostOrHardCoded($post_url, $hard_coded_url) {
         <p>Try using the <a href="http://wordpress.org/extend/plugins/wp-db-backup/" title="WP-DB-Backup Plugin">WP-DB-Backup Plugin</a> if you need help.</p>
        </div>
       <h1>Migrate WordPress</h1>
-     
-      
+
+
       <?php
       if(!@include('wp-config.php')){
         die('<div class="error">Cannot find config file. Please make sure this script is installed at the same level as wp-config.php and try again</div>');
@@ -131,35 +129,34 @@ function getURLPostOrHardCoded($post_url, $hard_coded_url) {
 
       mysql_connect(DB_HOST, DB_USER, DB_PASSWORD) or die('<div class="error">Could not connect to the database</div>');
       mysql_select_db(DB_NAME) or die('<div class="error">Could not select the database</div>');
-      
-      
-      
-      $url_pattern = getURLPostOrHardCoded($_POST['url_pattern'], $current_url);
-	  $url_replace = getURLPostOrHardCoded($_POST['url_replace'], $replacement_url);      
-         
+
+
+      $url_pattern = getUserSubmittedOrHardCodedUrl($_POST['url_pattern'], $current_url);
+	    $url_replace = getUserSubmittedOrHardCodedUrl($_POST['url_replace'], $replacement_url);
+
       // IF NOT SUBMITTED
       if((!$_POST['submit_urls'] || ($_POST['submit_urls'] && (!checkURL($url_pattern) || !checkURL($url_replace)))) && (!$_POST['submit_confirm'] || ($_POST['submit_confirm'] && !$_POST['confirm']))):
       ?>
-  
+
       <h2>Step 1: Setup...</h2>
-      
+
       <?php if($_POST['submit_urls'] && !checkURL($url_pattern)): ?>
       <div class="error">Your current URL (<?php echo $url_pattern ?>) is not a valid URL.</div>
       <?php endif; ?>
-      
+
       <?php if($_POST['submit_urls'] && !checkURL($url_replace)): ?>
       <div class="error">Your current URL (<?php echo $url_replace ?>) is not a valid URL.</div>
       <?php endif; ?>
-      
-      
+
+
       <p>Enter the URL location of your current install, and the URL location of your new install.</p>
-    
+
       <form id="url_form" action="<?php $_SERVER['PHP_SELF']; ?>" method="POST">
         <ul>
           <li>
             <label for="url_pattern">Your current URL</label>
             <input type="text" id="url_pattern" name="url_pattern" value="<?php echo $url_pattern; ?>" />
-          </li>   
+          </li>
           <li>
             <label for="url_replace">Your replacement(new) URL</label>
             <input type="text" id="url_replace" name="url_replace" value="<?php echo $url_replace; ?>" />
@@ -167,11 +164,11 @@ function getURLPostOrHardCoded($post_url, $hard_coded_url) {
         </ul>
         <input type="submit" id="submit_urls" name="submit_urls" value="Continue (Step 2)" />
       </form>
-      
+
       <p><strong>Note:</strong> You can define these URLs permanently by editing the script.</p>
-      
-     <?php elseif($_POST['submit_urls'] && (!$_POST['submit_confirm'] || ($_POST['submit_confirm'] && !$_POST['confirm']))): 
-     
+
+     <?php elseif($_POST['submit_urls'] && (!$_POST['submit_confirm'] || ($_POST['submit_confirm'] && !$_POST['confirm']))):
+
      $sql1 = "SELECT option_value FROM `" . $table_prefix . "options` WHERE option_name = 'siteurl'";
           $result1 = mysql_query($sql1);
           $row1 = mysql_fetch_assoc($result1);
@@ -187,15 +184,15 @@ function getURLPostOrHardCoded($post_url, $hard_coded_url) {
           $result4 = mysql_query($sql4);
           $content_count = mysql_num_rows($result4);
         $total = $content_count + $guid_count + ($home === $url_pattern ? 1 : 0) + ($site === $url_pattern ? 1 : 0);
-     
+
      ?>
       <h2 class="grey">Step 1: Setup...</h2>
       <ul class="grey">
         <li>Current URL is set to: <strong><?php echo $url_pattern; ?></strong></li>
-        <li>Replacement URL is set to: <strong><?php echo $url_replace; ?></strong></li>  
-      </ul> 
-     
-      
+        <li>Replacement URL is set to: <strong><?php echo $url_replace; ?></strong></li>
+      </ul>
+
+
       <h2>Step 2: Confirm...</h2>
       <ul>
         <li>Home URL: <strong><?php echo $home; ?></strong> - <?php echo $home != $url_replace ? '<span class="red">Home URL will be replaced</span>' : '<span class="green">Home URL is OK</span>'; ?></li>
@@ -205,30 +202,30 @@ function getURLPostOrHardCoded($post_url, $hard_coded_url) {
       </ul>
 
       <?php if($url_pattern != $home || $url_pattern != $site || $url_replace != $server_url): ?>
-           
+
         <?php if($url_pattern != $home): ?>
           <div class="warning">Your current URL (<?php echo $url_pattern; ?>) is not the same as the current home URL (<?php echo $home; ?>). This could cause issues. Please confirm you want to proceed below.</div>
         <?php endif; ?>
-        
+
         <?php if($url_pattern != $site): ?>
           <div class="warning">Your current URL (<?php echo $url_pattern; ?>) is not the same as the current site URL (<?php echo $site ?>). This could cause issues. Please confirm you want to proceed below.</div>
         <?php endif; ?>
-        
+
         <?php if($url_replace != $server_url): ?>
           <div class="warning">Your replacement URL (<?php echo $url_replace; ?>) is not the same as the current server URL (<?php echo $server_url; ?>). Please confirm you want to proceed below.</div>
         <?php endif; ?>
-      
+
       <?php endif; ?>
-      
+
       <?php if ($total > 0): ?>
         <div class="info"><strong><?php echo $total; ?></strong> database entries will be migrated</div>
-      
+
         <?php if($_POST['submit_confirm'] && !$_POST['confirm']): ?>
         <div class="error">You must confirm the changes to continue!</div>
         <?php endif; ?>
-        
-        
-          
+
+
+
         <form id="confirm_form" action="<?php $_SERVER['PHP_SELF']; ?>" method="POST">
         <input type="hidden" id="submit_urls" name="submit_urls" value="true" />
         <input type="hidden" id="url_pattern" name="url_pattern" value="<?php echo $url_pattern; ?>" />
@@ -242,22 +239,22 @@ function getURLPostOrHardCoded($post_url, $hard_coded_url) {
           </ul>
           <p><input type="submit" id="submit_confirm" name="submit_confirm" value="Lets do this!" /></p>
         </form>
-      
+
       <?php else: ?>
         <div class="success">Nothing to migrate!</div>
-      
+
       <?php endif; ?>
-  
+
       <?php
-      else: 
+      else:
         $log = '';
         $count = 0;
         $error = 0;
-        
+
         if($site !== $url_replace)
         {
           $log .= '<h3>Updating <strong>siteurl</strong></h3>';
-          
+
           $sql = "SELECT option_value FROM `" . $table_prefix . "options` WHERE option_name = 'siteurl'";
           $result = mysql_query($sql);
           $row = mysql_fetch_assoc($result);
@@ -276,11 +273,11 @@ function getURLPostOrHardCoded($post_url, $hard_coded_url) {
             $error++;
           }
         }
-        
+
         if($home !== $url_replace)
         {
           $log .= '<h3>Updating <strong>home</strong></h3>';
-          
+
           $sql = "SELECT option_value FROM `" . $table_prefix . "options` WHERE option_name = 'home'";
           $result = mysql_query($sql);
           $row = mysql_fetch_assoc($result);
@@ -298,23 +295,23 @@ function getURLPostOrHardCoded($post_url, $hard_coded_url) {
             $log .= '<div class="red">Something went wrong, <strong>home</strong> wasn\'t updated</div>';
             $error++;
           }
-        }  
-        
+        }
+
         $sql = "SELECT ID, guid FROM `" . $table_prefix . "posts`";
         $result = mysql_query($sql);
-        
-        
+
+
         $log .= '<h3>Updating ' . mysql_num_rows($result) . ' post guids</h3>';
-        
+
         while($row = mysql_fetch_assoc($result))
         {
-          
+
           $id = $row['ID'];
           $old_guid = $row['guid'];
           $new_guid = str_replace($url_pattern,$url_replace,$old_guid);
           $log .= '<pre>ID: ' . $id . '<br />OLD: ' . $old_guid . '<br />NEW: ' . $new_guid . '</pre>';
-        
-           
+
+
           $update = "UPDATE `" . $table_prefix . "posts` SET guid = '" . $new_guid . "' WHERE ID = '" .  $id ."'";
           $result2 = mysql_query($update);
           if($result2)
@@ -327,22 +324,22 @@ function getURLPostOrHardCoded($post_url, $hard_coded_url) {
             $log .= '<p class="red">Something went wrong</p>';
             $error++;
           }
-        } 
-        
+        }
+
         $sql = "SELECT ID, post_title, post_content FROM `" . $table_prefix . "posts` WHERE `post_content` LIKE '%" . $url_pattern . "%'";
         $result = mysql_query($sql);
         $log .= '<h3>Updating ' . mysql_num_rows($result) . ' posts contents</h3>';
-      
+
         while($row = mysql_fetch_assoc($result))
         {
-          
+
           $id = $row['ID'];
           $old_content = $row['post_content'];
           $new_content = str_replace($url_pattern,$url_replace,$old_content);
-          
-          $log .= '<pre>ID: ' . $id . '<br />TITLE: ' . $row['post_title'] . '</pre>'; 
-          
-          
+
+          $log .= '<pre>ID: ' . $id . '<br />TITLE: ' . $row['post_title'] . '</pre>';
+
+
           $update = "UPDATE `" . $table_prefix . "posts` SET post_content = '" . mysql_real_escape_string($new_content) . "' WHERE ID = '" .  $id ."'";
           $result2 = mysql_query($update);
           if($result2)
@@ -357,31 +354,31 @@ function getURLPostOrHardCoded($post_url, $hard_coded_url) {
           }
         }
         ?>
-        
+
         <h2 class="grey">Step 1: Setup...</h2>
         <ul class="grey">
           <li>Current URL is set to: <strong><?php echo $url_pattern; ?></strong></li>
-          <li>Replacement URL is set to: <strong><?php echo $url_replace; ?></strong></li>  
-        </ul> 
-        
+          <li>Replacement URL is set to: <strong><?php echo $url_replace; ?></strong></li>
+        </ul>
+
         <h2 class="grey">Step 2: Confirm...</h2>
         <ul class="grey">
           <li>Confirmed migration of <?php echo $_POST['total'] ?> database entries</li>
         </ul>
-        
+
         <h2>Step 3: Results...</h2>
-        
+
         <?php if($count != 0): ?>
         <div class="success"><strong><?php echo $count; ?></strong> database entries migrated succesfully</div>
         <?php endif; ?>
-        
+
         <?php if($error != 0): ?>
-        <div class="error"><strong><?php echo $error; ?></strong> database entries failed to migrate</div>   
+        <div class="error"><strong><?php echo $error; ?></strong> database entries failed to migrate</div>
         <?php endif; ?>
-        
-      
+
+
         <h2 class="grey">Details</h2>
-      
+
         <div class="details grey">
           <?php echo $log; ?>
         </div>
