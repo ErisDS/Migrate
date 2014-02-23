@@ -1,7 +1,13 @@
-<h1>Migrate</h1>
+<img class="" title="migrate" src="http://res.cloudinary.com/hannahwf/image/upload/v1392491823/migrate1_z1xgil.jpg" alt="Migrate" />
+
 <p>Migrate helps to move WordPress installations between URLs, for example between a development and production URL, or between domain names.</p>
 
 <p>At this time, the Migrate is only a script, rather than a plugin so that it can be run to correct database problems after a site has been moved.</p>
+
+<h2>Download</h2>
+
+Download a zip file from <a href="https://github.com/ErisDS/Migrate" title="GitHub">GitHub</a>. Direct link: <a href="https://github.com/ErisDS/Migrate/zipball/master" title="Download from GitHub">https://github.com/ErisDS/Migrate/zipball/master</a>
+
 
 <h2>Usage</h2>
 
@@ -28,7 +34,10 @@ The script does exactly the same thing each time it is run, therefore if you wan
 
 <h2>More Information</h2>
 
-<p>To download the script or for more information, including full instructions with sreenshots please see the project's webpage at: <a href="http://erisds.co.uk/projects/migrate">erisds.co.uk/projects/migrate</a></p>
+<p>For more details please see the blog post at: <a href="http://hannah.wf/migrate-announcement">hannah.wf/migrate-announcement</a></p>
+
+<h2>Contribute</h2>
+Feel free to raise bugs and open PRs. Try to keep to the existing code style. If you're interested in becoming a committer drop me a message.
 
 <h2>Changelog</h2>
 
