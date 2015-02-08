@@ -1,5 +1,7 @@
 <img class="" title="migrate" src="http://res.cloudinary.com/hannahwf/image/upload/v1392491823/migrate1_z1xgil.jpg" alt="Migrate" />
 
+<p><strong>Note:</strong> This WP script has been unloved for a couple of years. I'm not even sure if it still works / is useful, but if anyone would like to help maintain it please drop me an email :)</p>
+
 <p>Migrate helps to move WordPress installations between URLs, for example between a development and production URL, or between domain names.</p>
 
 <p>At this time, the Migrate is only a script, rather than a plugin so that it can be run to correct database problems after a site has been moved.</p>
