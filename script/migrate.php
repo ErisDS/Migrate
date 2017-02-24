@@ -127,8 +127,8 @@ function getUserSubmittedOrHardCodedUrl($post_url, $hard_coded_url) {
         die('<div class="error">Cannot find config file. Please make sure this script is installed at the same level as wp-config.php and try again</div>');
       }
 
-      mysql_connect(DB_HOST, DB_USER, DB_PASSWORD) or die('<div class="error">Could not connect to the database</div>');
-      mysql_select_db(DB_NAME) or die('<div class="error">Could not select the database</div>');
+      mysqli_connect(DB_HOST, DB_USER, DB_PASSWORD) or die('<div class="error">Could not connect to the database</div>');
+      mysqli_select_db(DB_NAME) or die('<div class="error">Could not select the database</div>');
 
 
       $url_pattern = getUserSubmittedOrHardCodedUrl($_POST['url_pattern'], $current_url);
@@ -170,19 +170,19 @@ function getUserSubmittedOrHardCodedUrl($post_url, $hard_coded_url) {
      <?php elseif($_POST['submit_urls'] && (!$_POST['submit_confirm'] || ($_POST['submit_confirm'] && !$_POST['confirm']))):
 
      $sql1 = "SELECT option_value FROM `" . $table_prefix . "options` WHERE option_name = 'siteurl'";
-          $result1 = mysql_query($sql1);
-          $row1 = mysql_fetch_assoc($result1);
+          $result1 = mysqli_query($sql1);
+          $row1 = mysqli_fetch_assoc($result1);
         $site = $row1['option_value'];
         $sql2 = "SELECT option_value FROM `" . $table_prefix . "options` WHERE option_name = 'home'";
-          $result2 = mysql_query($sql2);
-          $row2 = mysql_fetch_assoc($result2);
+          $result2 = mysqli_query($sql2);
+          $row2 = mysqli_fetch_assoc($result2);
         $home = $row2['option_value'];
         $sql3 = "SELECT ID, guid FROM `" . $table_prefix . "posts` WHERE guid LIKE '%".$url_pattern."%'";
-          $result3 = mysql_query($sql3);
-          $guid_count = mysql_num_rows($result3);
+          $result3 = mysqli_query($sql3);
+          $guid_count = mysqli_num_rows($result3);
         $sql4 = "SELECT ID, post_title, post_content FROM `" . $table_prefix . "posts` WHERE `post_content` LIKE '%" . $url_pattern . "%'";
-          $result4 = mysql_query($sql4);
-          $content_count = mysql_num_rows($result4);
+          $result4 = mysqli_query($sql4);
+          $content_count = mysqli_num_rows($result4);
         $total = $content_count + $guid_count + ($home === $url_pattern ? 1 : 0) + ($site === $url_pattern ? 1 : 0);
 
      ?>
@@ -256,12 +256,12 @@ function getUserSubmittedOrHardCodedUrl($post_url, $hard_coded_url) {
           $log .= '<h3>Updating <strong>siteurl</strong></h3>';
 
           $sql = "SELECT option_value FROM `" . $table_prefix . "options` WHERE option_name = 'siteurl'";
-          $result = mysql_query($sql);
-          $row = mysql_fetch_assoc($result);
+          $result = mysqli_query($sql);
+          $row = mysqli_fetch_assoc($result);
           $old_value = $row['option_value'];
           $new_value = str_replace($url_pattern,$url_replace,$old_value);
           $update = "UPDATE `" . $table_prefix . "options` SET option_value='" . $new_value . "' WHERE option_name='siteurl'";
-          $result2 = mysql_query($update);
+          $result2 = mysqli_query($update);
           if($result2)
           {
             $log .= '<div class="green">Updated <strong>siteurl</strong> successfully!</div>';
@@ -279,12 +279,12 @@ function getUserSubmittedOrHardCodedUrl($post_url, $hard_coded_url) {
           $log .= '<h3>Updating <strong>home</strong></h3>';
 
           $sql = "SELECT option_value FROM `" . $table_prefix . "options` WHERE option_name = 'home'";
-          $result = mysql_query($sql);
-          $row = mysql_fetch_assoc($result);
+          $result = mysqli_query($sql);
+          $row = mysqli_fetch_assoc($result);
           $old_value = $row['option_value'];
           $new_value = str_replace($url_pattern,$url_replace,$old_value);
           $update = "UPDATE `" . $table_prefix . "options` SET option_value='" . $new_value . "' WHERE option_name='home'";
-          $result2 = mysql_query($update);
+          $result2 = mysqli_query($update);
           if($result2)
           {
             $log .= '<div class="green">Updated <strong>home</strong> successfully!</div>';
@@ -298,12 +298,12 @@ function getUserSubmittedOrHardCodedUrl($post_url, $hard_coded_url) {
         }
 
         $sql = "SELECT ID, guid FROM `" . $table_prefix . "posts`";
-        $result = mysql_query($sql);
+        $result = mysqli_query($sql);
 
 
-        $log .= '<h3>Updating ' . mysql_num_rows($result) . ' post guids</h3>';
+        $log .= '<h3>Updating ' . mysqli_num_rows($result) . ' post guids</h3>';
 
-        while($row = mysql_fetch_assoc($result))
+        while($row = mysqli_fetch_assoc($result))
         {
 
           $id = $row['ID'];
@@ -313,7 +313,7 @@ function getUserSubmittedOrHardCodedUrl($post_url, $hard_coded_url) {
 
 
           $update = "UPDATE `" . $table_prefix . "posts` SET guid = '" . $new_guid . "' WHERE ID = '" .  $id ."'";
-          $result2 = mysql_query($update);
+          $result2 = mysqli_query($update);
           if($result2)
           {
             $log .= '<p class="green">GUID updated successfully!</p>';
@@ -327,10 +327,10 @@ function getUserSubmittedOrHardCodedUrl($post_url, $hard_coded_url) {
         }
 
         $sql = "SELECT ID, post_title, post_content FROM `" . $table_prefix . "posts` WHERE `post_content` LIKE '%" . $url_pattern . "%'";
-        $result = mysql_query($sql);
-        $log .= '<h3>Updating ' . mysql_num_rows($result) . ' posts contents</h3>';
+        $result = mysqli_query($sql);
+        $log .= '<h3>Updating ' . mysqli_num_rows($result) . ' posts contents</h3>';
 
-        while($row = mysql_fetch_assoc($result))
+        while($row = mysqli_fetch_assoc($result))
         {
 
           $id = $row['ID'];
@@ -340,8 +340,8 @@ function getUserSubmittedOrHardCodedUrl($post_url, $hard_coded_url) {
           $log .= '<pre>ID: ' . $id . '<br />TITLE: ' . $row['post_title'] . '</pre>';
 
 
-          $update = "UPDATE `" . $table_prefix . "posts` SET post_content = '" . mysql_real_escape_string($new_content) . "' WHERE ID = '" .  $id ."'";
-          $result2 = mysql_query($update);
+          $update = "UPDATE `" . $table_prefix . "posts` SET post_content = '" . mysqli_real_escape_string($new_content) . "' WHERE ID = '" .  $id ."'";
+          $result2 = mysqli_query($update);
           if($result2)
           {
             $log .= '<p>Post content updated succesfully!</p>';
